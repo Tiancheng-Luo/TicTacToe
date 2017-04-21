@@ -71,7 +71,7 @@ minimax([P0, P1, P2, P3, P4, P5, P6, P7, P8], Depth, IsMax, Score) :-
      evaluate(Board, 10),  Temp is 10 - Depth , Score = Temp, !;
      evaluate(Board, -10), Temp is (-10) + Depth , Score = Temp, !;
      neg(checkIfMovesLeft(Board)), Score = 0, !;
-     (IsMax == true,    %maximizer chance , call recursively for the minimizer chance
+     (IsMax == true,    %maximizer chance , call recursively for the minimizer chance by changing IsMax to false , If slot is not free return -1000
         ((P0 == 0, replace(Board, 0, 2, NewBoard0), minimax(NewBoard0, NextDepth, false, TempScore0));TempScore0 = -1000),
         ((P1 == 0, replace(Board, 1, 2, NewBoard1), minimax(NewBoard1, NextDepth, false, TempScore1));TempScore1 = -1000),
         ((P2 == 0, replace(Board, 2, 2, NewBoard2), minimax(NewBoard2, NextDepth, false, TempScore2));TempScore2 = -1000),
@@ -84,7 +84,7 @@ minimax([P0, P1, P2, P3, P4, P5, P6, P7, P8], Depth, IsMax, Score) :-
         max_list([TempScore0, TempScore1, TempScore2, TempScore3, TempScore4, TempScore5, TempScore6, TempScore7, TempScore8], BestVal),    %find maximum score of maximizer and return that
         Score = BestVal
      ), !;
-     (IsMax = false,    %minimizer chance , call recursively for the maximizer chance
+     (IsMax = false,    %minimizer chance , call recursively for the maximizer chance by changing IsMax to true , If slot is not free return 1000
         ((P0 == 0, replace(Board, 0, 1, NewBoard0), minimax(NewBoard0, NextDepth, true, TempScore0));TempScore0 = 1000),
         ((P1 == 0, replace(Board, 1, 1, NewBoard1), minimax(NewBoard1, NextDepth, true, TempScore1));TempScore1 = 1000),
         ((P2 == 0, replace(Board, 2, 1, NewBoard2), minimax(NewBoard2, NextDepth, true, TempScore2));TempScore2 = 1000),
@@ -104,6 +104,7 @@ minimax([P0, P1, P2, P3, P4, P5, P6, P7, P8], Depth, IsMax, Score) :-
 */
 functionToFindBestMove([P0, P1, P2, P3, P4, P5, P6, P7, P8], Chance):-
    Board = [P0, P1, P2, P3, P4, P5, P6, P7, P8],
+   %If slot is not free return -1000
    ((P0 == 0, replace(Board, 0, 2, NewBoard0), minimax(NewBoard0, 0, false, TempScore0));TempScore0 = -1000),
    ((P1 == 0, replace(Board, 1, 2, NewBoard1), minimax(NewBoard1, 0, false, TempScore1));TempScore1 = -1000),
    ((P2 == 0, replace(Board, 2, 2, NewBoard2), minimax(NewBoard2, 0, false, TempScore2));TempScore2 = -1000),
