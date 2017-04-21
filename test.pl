@@ -63,9 +63,9 @@ minimax(Board, false, Score):-
     ).
 
 functionMaxPlayer(Board, 9, -1000).
-functionMaxPlayer(Board, Index, Best) :-
+functionMaxPlayer(Board, Index, Best):-
     (
-        nth(Index, Board, 'y'), !, replace(Board, Index, 'o', NewBoard), minimax(NewBoard, false, TempScore), max(Best, TempScore, NewScore), replace(NewBoard, Index, 'y', OldBoard), NextIndex is Index+1, functionMaxPlayer(OldBoard, NextIndex, NewScore), Best = NewScore;
+        nth(Index, Board, 'y'), !, NextIndex is Index+1, functionMaxPlayer(Board, NextIndex, NextIndexScore), replace(Board, Index, 'o', NewBoard), minimax(NewBoard, false, TempScore), max(NextIndexScore, TempScore, NewScore), Best = NewScore;
         
         NextIndex is Index+1, functionMaxPlayer(Board, NextIndex, NewBest), Best = NewBest;
     ).
@@ -73,30 +73,30 @@ functionMaxPlayer(Board, Index, Best) :-
 
 
 functionMinPlayer(Board, 9, 1000).
-functionMinPlayer(Board, Index, Best) :-
+functionMinPlayer(Board, Index, Best):-
     (
-        nth(Index, Board, 'y'), !, replace(Board, Index, 'o', NewBoard), minimax(NewBoard, true, TempScore), min(Best, TempScore, NewScore), replace(NewBoard, Index, 'y', OldBoard), NextIndex is Index+1, functionMinPlayer(OldBoard, NextIndex, NewScore), Best = NewScore;
+        nth(Index, Board, 'y'), !, NextIndex is Index+1, functionMinPlayer(Board, NextIndex, NextIndexScore), replace(Board, Index, 'x', NewBoard), minimax(NewBoard, true, TempScore), min(NextIndexScore, TempScore, NewScore), Best = NewScore;
         
         NextIndex is Index+1, functionMinPlayer(Board, NextIndex, NewBest), Best = NewBest;
-    ). 
+    ).
 
 
 
 
 
 recursiveFunctionBestMove(Board, 9, -1000, 0).
-recursiveFunctionBestMove(Board, Index, Best, Chance) :-
+recursiveFunctionBestMove(Board, Index, Best, Chance):-
     (
-        nth(Index, Board, 'y'), !, NextIndex is Index+1, recursiveFunctionBestMove(Board, NextIndex, TempScore, NextChance), replace(Board, Index, 'o', NewBoard), minimax(NewBoard, false, TempScore), replace(NewBoard, Index, 'y', OldBoard), TempScore > Best, !, Chance = Index, N,  ;
+        nth(Index, Board, 'y'), !, NextIndex is Index+1, recursiveFunctionBestMove(Board, NextIndex, NextIndexScore, NextIndexChance), replace(Board, Index, 'o', NewBoard), minimax(NewBoard, false, TempScore), TempScore > NextIndexScore, !, Best = TempScore, Chance = Index;
 
-        nth(Index, Board, 'y'), !, replace(Board, Index, 'o', NewBoard), minimax(NewBoard, false, TempScore), replace(NewBoard, Index, 'y', OldBoard), TempScore <= Best, !, NextIndex is Index+1, recursiveFunctionBestMove(OldBoard, NextIndex, Best, NextChance) Chance = NextChance;
+        nth(Index, Board, 'y'), !, NextIndex is Index+1, recursiveFunctionBestMove(Board, NextIndex, NextIndexScore, NextIndexChance), replace(Board, Index, 'o', NewBoard), minimax(NewBoard, false, TempScore), TempScore <= NextIndexScore, !, Best = NextIndexScore, Chance = NextIndexChance;
         
         NextIndex is Index+1, recursiveFunctionBestMove(Board, NextIndex, Best, NextChance), Chance = NextChance;
     ). 
     
     
     
-findBestMove(Board) :-
+findBestMove(Board , Answer):- recursiveFunctionBestMove(Board, 0, -1000, Chance), Answer = Chance.
     
 
 % Predicates for checking winning
